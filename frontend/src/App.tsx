@@ -1,9 +1,10 @@
 import React from 'react';
+import ScooterDashboard from './ScooterDashboard';
 
 function App() {
   return (
     <div className="App">
-      <h1>VoltRide - Frontend</h1>
+      <ScooterDashboard />
     </div>
   );
 }
