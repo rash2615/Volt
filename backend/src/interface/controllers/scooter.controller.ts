@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { ScooterService } from '../services/scooter.service';
 
 @Controller()
@@ -13,13 +13,23 @@ export class ScooterController {
 
   // Route GET /scooters
   @Get('scooters')
-  getAllScooters(): any {
-    return this.scooterService.getAllScooters();
+  async getAllScooters(): Promise<any> {
+    return await this.scooterService.getAllScooters();
   }
 
   // Route GET /scooters/:id/status
   @Get('scooters/:id/status')
-  getScooterStatus(@Param('id') id: string): string {
-    return this.scooterService.checkStatus(id);
+  async getScooterStatus(@Param('id') id: string): Promise<string> {
+    return await this.scooterService.checkStatus(id);
+  }
+
+  // Route POST /scooters
+  @Post('scooters')
+  async createScooter(@Body() scooterData: { model: string; batteryCycles: number; lastMaintenanceDate: Date }): Promise<any> {
+    return await this.scooterService.createScooter(
+      scooterData.model,
+      scooterData.batteryCycles,
+      new Date(scooterData.lastMaintenanceDate)
+    );
   }
 }

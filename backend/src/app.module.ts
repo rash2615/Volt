@@ -1,18 +1,15 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { ScooterController } from './interface/controllers/scooter.controller';
 import { ScooterService } from './interface/services/scooter.service';
-import { MaintenanceController } from './interface/controllers/maintenance.controller';
-import { StockController } from './interface/controllers/stock.controller';
-import { TestRideController } from './interface/controllers/test-ride.controller';
+import { Scooter, ScooterSchema } from './infrastructure/database/schemas/scooter.schema';
 
 @Module({
-  imports: [],
-  controllers: [
-    ScooterController,
-    MaintenanceController,
-    StockController,
-    TestRideController,
+  imports: [
+    MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://mongo:27017/voltride'),
+    MongooseModule.forFeature([{ name: 'Scooter', schema: ScooterSchema }]), // Importation du modèle
   ],
+  controllers: [ScooterController],
   providers: [ScooterService],
 })
 export class AppModule {}

@@ -1,7 +1,7 @@
-import { Scooter } from '../../domain/entities/scooter.entity';
+import { ScooterEntity } from '../../domain/entities/scooter.entity';
 
 export class CheckScooterStatusUseCase {
-  execute(scooter: Scooter): string {
+  execute(scooter: ScooterEntity): string {
     return scooter.needsMaintenance()
       ? 'Maintenance requise'
       : 'Scooter opérationnel';
