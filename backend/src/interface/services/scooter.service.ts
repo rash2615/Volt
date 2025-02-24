@@ -61,4 +61,13 @@ export class ScooterService {
       scooter.lastMaintenanceDate
     );
   }
+
+  async deleteScooter(id: string): Promise<string> {
+    const result = await this.scooterModel.findOneAndDelete({ id }); // Utilise l'UUID et non _id
+    if (!result) {
+      throw new Error('Scooter introuvable');
+    }
+    return 'Scooter supprimé avec succès';
+  }
+  
 }

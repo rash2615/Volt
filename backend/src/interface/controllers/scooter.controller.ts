@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param } from '@nestjs/common';
 import { ScooterService } from '../services/scooter.service';
 
 @Controller()
@@ -32,4 +32,10 @@ export class ScooterController {
       new Date(scooterData.lastMaintenanceDate)
     );
   }
+
+@Delete('scooters/:id')
+async deleteScooter(@Param('id') id: string) {
+  return this.scooterService.deleteScooter(id);
+}
+
 }

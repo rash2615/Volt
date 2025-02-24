@@ -5,7 +5,7 @@ export type ScooterDocument = Scooter & Document;
 
 @Schema()
 export class Scooter {
-  @Prop({ required: true })
+  @Prop({ required: true, type: String })  // Spécifie que l'ID est une chaîne
   id!: string;
 
   @Prop({ required: true })

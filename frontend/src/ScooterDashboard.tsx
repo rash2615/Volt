@@ -52,18 +52,38 @@ const ScooterDashboard = () => {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    console.log('Suppression du scooter avec ID:', id); // Vérifier l'ID
+    try {
+      await axios.delete(`http://localhost:3001/scooters/${id}`);
+      fetchScooters();
+      toast.success('🗑️ Scooter supprimé avec succès !');
+    } catch (error) {
+      console.error('Erreur lors de la suppression du scooter :', error);
+      toast.error('❌ Impossible de supprimer le scooter.');
+    }
+  };
+  
+  
   return (
 
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">📋 Liste des Scooters</h1>
       <ul className="mb-6">
         {scooters.map((scooter) => (
-          <li key={scooter.id} className="border p-2 rounded mb-2">
-            🚲 <strong>{scooter.model}</strong> - Cycles: {scooter.batteryCycles} - Maintenance :{' '}
-            {new Date(scooter.lastMaintenanceDate).toLocaleDateString()}
-          </li>
+            <li key={scooter.id} className="border p-2 rounded mb-2 flex justify-between items-center">
+            <div>
+                🚲 <strong>{scooter.model}</strong> - Cycles: {scooter.batteryCycles} - Maintenance: {new Date(scooter.lastMaintenanceDate).toLocaleDateString()}
+            </div>
+            <button
+                onClick={() => handleDelete(scooter.id)}
+                className="bg-red-500 text-white p-2 rounded"
+            >
+                🗑️ Supprimer
+            </button>
+            </li>
         ))}
-      </ul>
+        </ul>
 
       <h2 className="text-xl font-semibold mb-2">➕ Ajouter un nouveau scooter</h2>
       <form onSubmit={handleSubmit} className="space-y-2">
