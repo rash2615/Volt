@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 type Scooter = {
   id: string;
@@ -23,6 +26,7 @@ const ScooterDashboard = () => {
       setScooters(response.data);
     } catch (error) {
       console.error('Erreur lors de la récupération des scooters :', error);
+      toast.error('❌ Erreur lors de la récupération des scooters.');
     }
   };
 
@@ -41,12 +45,15 @@ const ScooterDashboard = () => {
       await axios.post('http://localhost:3001/scooters', formData);
       fetchScooters(); // Rafraîchir la liste
       setFormData({ model: '', batteryCycles: 0, lastMaintenanceDate: '' });
+      toast.success('✅ Scooter ajouté avec succès !');
     } catch (error) {
       console.error('Erreur lors de la création du scooter :', error);
+      toast.error('❌ Impossible d\'ajouter le scooter.');
     }
   };
 
   return (
+
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">📋 Liste des Scooters</h1>
       <ul className="mb-6">
@@ -90,6 +97,7 @@ const ScooterDashboard = () => {
           ➕ Ajouter
         </button>
       </form>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick pauseOnFocusLoss draggable pauseOnHover />
     </div>
   );
 };
