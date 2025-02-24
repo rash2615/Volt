@@ -1,0 +1,16 @@
+# Node.js
+node_modules/
+dist/
+
+# Logs
+logs/
+*.log
+
+# Environments
+.env
+
+# Docker
+docker-compose.override.yml
+
+# IDEs
+.vscode/
