@@ -1,19 +1,25 @@
-import { Controller, Get } from '@nestjs/common';
-import { ScooterService } from '../../services/scooter.service';
+import { Controller, Get, Param } from '@nestjs/common';
+import { ScooterService } from '../services/scooter.service';
 
 @Controller()
 export class ScooterController {
   constructor(private readonly scooterService: ScooterService) {}
 
-  // Route par défaut (GET /)
+  // Route par défaut pour /
   @Get()
   defaultRoute(): string {
-    return 'VoltRide Backend API - Welcome!';
+    return 'Bienvenue sur l\'API VoltRide - Backend opérationnel 🚀';
   }
 
-  // Route pour les scooters (GET /scooters)
+  // Route GET /scooters
   @Get('scooters')
-  findAll(): string {
-    return this.scooterService.getScooters();
+  getAllScooters(): any {
+    return this.scooterService.getAllScooters();
+  }
+
+  // Route GET /scooters/:id/status
+  @Get('scooters/:id/status')
+  getScooterStatus(@Param('id') id: string): string {
+    return this.scooterService.checkStatus(id);
   }
 }
