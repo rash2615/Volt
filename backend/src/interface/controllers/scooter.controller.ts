@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { ScooterService } from '../services/scooter.service';
+import { ScooterService } from '../../services/scooter.service';
 
 @Controller()
 export class ScooterController {

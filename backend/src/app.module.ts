@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ScooterController } from './controllers/scooter.controller';
+import { ScooterController } from './interface/controllers/scooter.controller';
 import { ScooterService } from './services/scooter.service';
 
 @Module({
