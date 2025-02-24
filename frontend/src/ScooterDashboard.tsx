@@ -3,7 +3,6 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 type Scooter = {
   id: string;
   model: string;
@@ -18,6 +17,12 @@ const ScooterDashboard = () => {
     batteryCycles: 0,
     lastMaintenanceDate: '',
   });
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Gérer la recherche
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   // Récupérer la liste des scooters depuis l'API
   const fetchScooters = async () => {
@@ -53,7 +58,7 @@ const ScooterDashboard = () => {
   };
 
   const handleDelete = async (id: string) => {
-    console.log('Suppression du scooter avec ID:', id); // Vérifier l'ID
+    console.log('Suppression du scooter avec ID:', id);
     try {
       await axios.delete(`http://localhost:3001/scooters/${id}`);
       fetchScooters();
@@ -63,27 +68,38 @@ const ScooterDashboard = () => {
       toast.error('❌ Impossible de supprimer le scooter.');
     }
   };
-  
-  
-  return (
 
+  const filteredScooters = scooters.filter((scooter) =>
+    scooter.model.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">📋 Liste des Scooters</h1>
+
+      <input
+        type="text"
+        placeholder="Rechercher par modèle"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        className="border p-2 rounded w-full mb-4"
+      />
+
       <ul className="mb-6">
-        {scooters.map((scooter) => (
-            <li key={scooter.id} className="border p-2 rounded mb-2 flex justify-between items-center">
+        {filteredScooters.map((scooter) => (
+          <li key={scooter.id} className="border p-2 rounded mb-2 flex justify-between items-center">
             <div>
-                🚲 <strong>{scooter.model}</strong> - Cycles: {scooter.batteryCycles} - Maintenance: {new Date(scooter.lastMaintenanceDate).toLocaleDateString()}
+              🚲 <strong>{scooter.model}</strong> - Cycles: {scooter.batteryCycles} - Maintenance: {new Date(scooter.lastMaintenanceDate).toLocaleDateString()}
             </div>
             <button
-                onClick={() => handleDelete(scooter.id)}
-                className="bg-red-500 text-white p-2 rounded"
+              onClick={() => handleDelete(scooter.id)}
+              className="bg-red-500 text-white p-2 rounded"
             >
-                🗑️ Supprimer
+              🗑️ Supprimer
             </button>
-            </li>
+          </li>
         ))}
-        </ul>
+      </ul>
 
       <h2 className="text-xl font-semibold mb-2">➕ Ajouter un nouveau scooter</h2>
       <form onSubmit={handleSubmit} className="space-y-2">
