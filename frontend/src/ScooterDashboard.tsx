@@ -19,6 +19,17 @@ const ScooterDashboard = () => {
   });
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Vérifier si un scooter a besoin de maintenance
+  const needsMaintenance = (scooter: Scooter) => {
+    const sixMonths = 1000 * 60 * 60 * 24 * 30 * 6; // 6 mois en millisecondes
+    const lastMaintenance = new Date(scooter.lastMaintenanceDate).getTime();
+    const now = Date.now();
+    return (
+      scooter.batteryCycles >= 50 ||
+      now - lastMaintenance > sixMonths
+    );
+  };
+
   // Gérer la recherche
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -73,6 +84,8 @@ const ScooterDashboard = () => {
     scooter.model.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const scootersNeedingMaintenance = scooters.filter(needsMaintenance);
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">📋 Liste des Scooters</h1>
@@ -85,15 +98,19 @@ const ScooterDashboard = () => {
         className="border p-2 rounded w-full mb-4"
       />
 
+      <h2 className="text-xl font-semibold mb-2 text-red-500">⚠️ Scooters nécessitant une maintenance</h2>
+      {!scootersNeedingMaintenance.length && (
+        <p className="text-green-500">✅ Tous les scooters sont en bon état.</p>
+      )}
       <ul className="mb-6">
-        {filteredScooters.map((scooter) => (
-          <li key={scooter.id} className="border p-2 rounded mb-2 flex justify-between items-center">
+        {scootersNeedingMaintenance.map((scooter) => (
+          <li key={scooter.id} className="border p-2 rounded mb-2 bg-red-100 flex justify-between items-center">
             <div>
               🚲 <strong>{scooter.model}</strong> - Cycles: {scooter.batteryCycles} - Maintenance: {new Date(scooter.lastMaintenanceDate).toLocaleDateString()}
             </div>
             <button
               onClick={() => handleDelete(scooter.id)}
-              className="bg-red-500 text-white p-2 rounded"
+              className="bg-red-600 text-white p-2 rounded"
             >
               🗑️ Supprimer
             </button>
