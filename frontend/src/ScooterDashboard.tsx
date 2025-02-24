@@ -30,6 +30,26 @@ const ScooterDashboard = () => {
     );
   };
 
+  // Calcul des statistiques
+  const totalScooters = scooters.length;
+  const scootersNeedingMaintenance = scooters.filter(needsMaintenance);
+  const averageBatteryCycles = totalScooters
+    ? Math.round(
+        scooters.reduce((acc, scooter) => acc + scooter.batteryCycles, 0) / totalScooters
+      )
+    : 0;
+  const averageMaintenanceDelay = totalScooters
+    ? Math.round(
+        scooters.reduce((acc, scooter) => {
+          const lastMaintenance = new Date(scooter.lastMaintenanceDate).getTime();
+          const now = Date.now();
+          return acc + (now - lastMaintenance);
+        }, 0) /
+          totalScooters /
+          (1000 * 60 * 60 * 24) // Convertir en jours
+      )
+    : 0;
+
   // Gérer la recherche
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -84,12 +104,31 @@ const ScooterDashboard = () => {
     scooter.model.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const scootersNeedingMaintenance = scooters.filter(needsMaintenance);
-
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">📋 Liste des Scooters</h1>
 
+      {/* Statistiques */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="p-4 bg-blue-100 rounded shadow">
+          <h3 className="text-lg font-semibold">🚲 Total des Scooters</h3>
+          <p className="text-2xl">{totalScooters}</p>
+        </div>
+        <div className="p-4 bg-red-100 rounded shadow">
+          <h3 className="text-lg font-semibold">⚠️ Scooters en Maintenance</h3>
+          <p className="text-2xl">{scootersNeedingMaintenance.length}</p>
+        </div>
+        <div className="p-4 bg-green-100 rounded shadow">
+          <h3 className="text-lg font-semibold">🔋 Moyenne Cycles</h3>
+          <p className="text-2xl">{averageBatteryCycles}</p>
+        </div>
+        <div className="p-4 bg-yellow-100 rounded shadow">
+          <h3 className="text-lg font-semibold">📅 Maintenance Moyenne</h3>
+          <p className="text-2xl">{averageMaintenanceDelay} jours</p>
+        </div>
+      </div>
+
+      {/* Recherche */}
       <input
         type="text"
         placeholder="Rechercher par modèle"
@@ -98,6 +137,7 @@ const ScooterDashboard = () => {
         className="border p-2 rounded w-full mb-4"
       />
 
+      {/* Liste des scooters nécessitant une maintenance */}
       <h2 className="text-xl font-semibold mb-2 text-red-500">⚠️ Scooters nécessitant une maintenance</h2>
       {!scootersNeedingMaintenance.length && (
         <p className="text-green-500">✅ Tous les scooters sont en bon état.</p>
@@ -118,6 +158,7 @@ const ScooterDashboard = () => {
         ))}
       </ul>
 
+      {/* Formulaire pour ajouter un scooter */}
       <h2 className="text-xl font-semibold mb-2">➕ Ajouter un nouveau scooter</h2>
       <form onSubmit={handleSubmit} className="space-y-2">
         <input
