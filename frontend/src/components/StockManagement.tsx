@@ -1,29 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Package, Home, Bike, Settings, Edit, Trash2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Home, Settings, Package, Edit, Trash2, PlusCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import '../assets/stockManagement.css';
 
 // Types
-type StockItem = {
-  id: string;
+interface StockItem {
+  _id: string;
   name: string;
   quantity: number;
   lastRestocked: string;
-};
+}
 
 const StockManagement = () => {
   const [stockItems, setStockItems] = useState<StockItem[]>([]);
-  const [formData, setFormData] = useState({
-    name: '',
-    quantity: 0,
-    lastRestocked: '',
-  });
+  const [formData, setFormData] = useState({ name: '', quantity: 0, lastRestocked: '' });
   const [editingItem, setEditingItem] = useState<StockItem | null>(null);
 
-  // Fetch stock data from the API
+  // Récupérer la liste des stocks
   const fetchStockItems = async () => {
     try {
       const response = await axios.get<StockItem[]>('http://localhost:3001/stock');
@@ -37,7 +33,7 @@ const StockManagement = () => {
     fetchStockItems();
   }, []);
 
-  // Form Handling
+  // Gestion du formulaire
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -46,7 +42,7 @@ const StockManagement = () => {
     e.preventDefault();
     try {
       if (editingItem) {
-        await axios.put(`http://localhost:3001/stock/${editingItem.id}`, formData);
+        await axios.put(`http://localhost:3001/stock/${editingItem._id}`, formData);
         toast.success('✅ Stock modifié avec succès !');
         setEditingItem(null);
       } else {
@@ -60,23 +56,14 @@ const StockManagement = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (_id: string) => {
     try {
-      await axios.delete(`http://localhost:3001/stock/${id}`);
+      await axios.delete(`http://localhost:3001/stock/${_id}`);
       toast.success('🗑️ Stock supprimé avec succès !');
       fetchStockItems();
     } catch (error) {
       toast.error('❌ Impossible de supprimer le stock.');
     }
-  };
-
-  const handleEdit = (item: StockItem) => {
-    setEditingItem(item);
-    setFormData({
-      name: item.name,
-      quantity: item.quantity,
-      lastRestocked: item.lastRestocked.split('T')[0], // Format pour input date
-    });
   };
 
   return (
@@ -88,10 +75,7 @@ const StockManagement = () => {
           <Link to="/dashboard" className="nav-button">
             <Home size={18} /> Dashboard
           </Link>
-          <Link to="/scooters" className="nav-button">
-            <Bike size={18} /> Scooters
-          </Link>
-          <Link to="/stock" className="nav-button">
+          <Link to="/stock" className="nav-button active">
             <Package size={18} /> Gestion des Stocks
           </Link>
           <Link to="/settings" className="nav-button">
@@ -100,7 +84,7 @@ const StockManagement = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
+      {/* Contenu principal */}
       <div className="stock-management-container">
         <h1 className="page-title">📦 Gestion des Stocks</h1>
 
@@ -108,29 +92,9 @@ const StockManagement = () => {
         <section className="stock-form-section">
           <h2>{editingItem ? '✏️ Modifier un stock' : '➕ Ajouter un nouveau stock'}</h2>
           <form onSubmit={handleSubmit} className="stock-form">
-            <input
-              type="text"
-              name="name"
-              placeholder="Nom de l'article"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="number"
-              name="quantity"
-              placeholder="Quantité"
-              value={formData.quantity}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="date"
-              name="lastRestocked"
-              value={formData.lastRestocked}
-              onChange={handleChange}
-              required
-            />
+            <input type="text" name="name" placeholder="Nom de l'article" value={formData.name} onChange={handleChange} required />
+            <input type="number" name="quantity" placeholder="Quantité" value={formData.quantity} onChange={handleChange} required />
+            <input type="date" name="lastRestocked" value={formData.lastRestocked} onChange={handleChange} required />
             <button type="submit" className="submit-button">
               {editingItem ? '✅ Modifier' : '➕ Ajouter'}
             </button>
@@ -142,17 +106,17 @@ const StockManagement = () => {
           <h2 className="list-title">📋 Liste des Stocks</h2>
           <div className="stock-grid">
             {stockItems.map((item) => (
-              <div key={item.id} className="stock-card">
+              <div key={item._id} className="stock-card">
                 <div>
                   <h3 className="stock-item-name">📦 {item.name}</h3>
                   <p>Quantité : {item.quantity}</p>
                   <p>Dernier réapprovisionnement : {new Date(item.lastRestocked).toLocaleDateString()}</p>
                 </div>
                 <div className="action-buttons">
-                  <button onClick={() => handleEdit(item)} className="edit-button">
+                  <button onClick={() => setEditingItem(item)} className="edit-button">
                     <Edit size={18} />
                   </button>
-                  <button onClick={() => handleDelete(item.id)} className="delete-button">
+                  <button onClick={() => handleDelete(item._id)} className="delete-button">
                     <Trash2 size={18} />
                   </button>
                 </div>
