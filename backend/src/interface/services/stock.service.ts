@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+// src/interface/services/stock.service.ts
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { StockItem, StockItemDocument } from '../../infrastructure/database/schemas/stock.schema';
@@ -13,37 +14,24 @@ export class StockService {
     return this.stockModel.find().exec();
   }
 
-  async createStockItem(stockData: Partial<StockItem>): Promise<StockItem> {
-    const newItem = new this.stockModel(stockData);
+  async createStockItem(data: Partial<StockItem>): Promise<StockItem> {
+    const newItem = new this.stockModel(data);
     return newItem.save();
   }
 
-  async updateStockItem(id: string, stockData: Partial<StockItem>): Promise<StockItem | null> {
-    return this.stockModel.findByIdAndUpdate(id, stockData, { new: true }).exec();
+  async updateStockItem(id: string, data: Partial<StockItem>): Promise<StockItem | null> {
+    const updatedItem = await this.stockModel.findByIdAndUpdate(id, data, { new: true }).exec();
+    if (!updatedItem) {
+      throw new NotFoundException(`Stock non trouvé avec l'ID ${id}`);
+    }
+    return updatedItem;
   }
 
   async deleteStockItem(id: string): Promise<StockItem | null> {
-    return this.stockModel.findByIdAndDelete(id).exec();
-  }
-
-  async usePart(partId: string, quantity: number): Promise<string> {
-    const item = await this.stockModel.findById(partId).exec();
-
-    if (!item) {
-      return '❌ Pièce non trouvée.';
+    const deletedItem = await this.stockModel.findByIdAndDelete(id).exec();
+    if (!deletedItem) {
+      throw new NotFoundException(`Stock non trouvé avec l'ID ${id}`);
     }
-
-    if (item.quantity < quantity) {
-      return '❌ Stock insuffisant.';
-    }
-
-    item.quantity -= quantity;
-    await item.save();
-
-    if (item.quantity <= 5) {
-      return `⚠️ Attention, le stock de ${item.name} est faible.`;
-    }
-
-    return `${quantity} ${item.name}(s) utilisé(s) avec succès.`;
+    return deletedItem;
   }
 }

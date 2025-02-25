@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+// src/interface/controllers/stock.controller.ts
+import { Controller, Get, Post, Put, Delete, Param, Body, NotFoundException } from '@nestjs/common';
 import { StockService } from '../services/stock.service';
 import { StockItem } from '../../infrastructure/database/schemas/stock.schema';
 
@@ -17,23 +18,20 @@ export class StockController {
   }
 
   @Put(':id')
-  async updateStockItem(
-    @Param('id') id: string,
-    @Body() stockData: Partial<StockItem>,
-  ): Promise<StockItem | null> {
-    return this.stockService.updateStockItem(id, stockData);
+  async updateStockItem(@Param('id') id: string, @Body() stockData: Partial<StockItem>): Promise<StockItem> {
+    const updatedItem = await this.stockService.updateStockItem(id, stockData);
+    if (!updatedItem) {
+      throw new NotFoundException(`Le stock avec l'ID ${id} n'a pas été trouvé.`);
+    }
+    return updatedItem;
   }
 
   @Delete(':id')
-  async deleteStockItem(@Param('id') id: string): Promise<StockItem | null> {
-    return this.stockService.deleteStockItem(id);
-  }
-
-  // ✅ Route pour utiliser une pièce du stock
-  @Post('use')
-  async usePart(@Body() body: { partId: string; quantity: number }): Promise<{ message: string }> {
-    const result = await this.stockService.usePart(body.partId, body.quantity);
-
-    return { message: result };
+  async deleteStockItem(@Param('id') id: string): Promise<StockItem> {
+    const deletedItem = await this.stockService.deleteStockItem(id);
+    if (!deletedItem) {
+      throw new NotFoundException(`Le stock avec l'ID ${id} n'a pas été trouvé.`);
+    }
+    return deletedItem;
   }
 }
