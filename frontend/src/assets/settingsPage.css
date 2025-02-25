@@ -1,0 +1,132 @@
+.settings-container {
+    padding: 2rem;
+  }
+
+/* Thème clair */
+.light-theme {
+    background-color: #f7f9fc;
+    color: #1f2937;
+  }
+  
+  /* Thème sombre */
+  .dark-theme {
+    background-color: #1e293b;
+    color: #f1f5f9;
+  }
+  
+  /* Navbar */
+  .navbar {
+    background-color: #1e293b;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .nav-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #cbd5e1;
+    text-decoration: none;
+  }
+  
+  .nav-button.active,
+  .nav-button:hover {
+    color: #3b82f6;
+  }
+  
+  /* Paramètres */
+  .settings-content {
+    padding: 2rem 4rem;
+  }
+  
+  .page-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+  }
+  
+  /* Sections de paramètres */
+  .settings-section {
+    background-color: white;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 12px;
+  }
+  
+  .settings-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .input-select {
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+  
+  /* Toggle switch */
+  .toggle-switch {
+    width: 40px;
+    height: 20px;
+    background-color: #e2e8f0;
+    border-radius: 9999px;
+    position: relative;
+    appearance: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .toggle-switch:checked {
+    background-color: #3b82f6;
+  }
+  
+  .toggle-switch::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .toggle-switch:checked::before {
+    transform: translateX(20px);
+  }
+  
+  /* Bouton de sauvegarde */
+  .save-button {
+    background-color: #3b82f6;
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .save-button:hover {
+    background-color: #2563eb;
+  }
+  
