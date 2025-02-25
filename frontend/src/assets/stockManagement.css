@@ -1,0 +1,206 @@
+/* ======= General Styles ======= */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .dashboard-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  /* ======= Navbar ======= */
+  .navbar {
+    background-color: #4a00e0;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+  }
+  
+  .brand {
+    font-size: 1.8rem;
+    font-weight: bold;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .nav-button {
+    background: transparent;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    text-decoration: none;
+  }
+  
+  .nav-button:hover {
+    background-color: #7b2ff7;
+  }
+  
+  /* ======= Main Content ======= */
+  .stock-management-container {
+    padding: 2rem;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #4a00e0;
+    text-align: center;
+  }
+  
+  /* ======= Stock Form Section ======= */
+  .stock-form-section {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .stock-form-section:hover {
+    transform: translateY(-5px);
+  }
+  
+  .stock-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .stock-form input {
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+  
+  .stock-form input:focus {
+    border-color: #4a00e0;
+    outline: none;
+  }
+  
+  .submit-button {
+    background-color: #4a00e0;
+    color: white;
+    padding: 0.8rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .submit-button:hover {
+    background-color: #7b2ff7;
+  }
+  
+  /* ======= Stock List ======= */
+  .list-title {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .stock-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  
+  .stock-card {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: box-shadow 0.3s ease-in-out;
+  }
+  
+  .stock-card:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .stock-item-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4a00e0;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .edit-button, .delete-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+  }
+  
+  .edit-button:hover {
+    background-color: #7b2ff7;
+    color: white;
+  }
+  
+  .delete-button:hover {
+    background-color: #e63946;
+    color: white;
+  }
+  
+  /* ======= Animations ======= */
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .stock-card {
+    animation: fadeInUp 0.5s ease forwards;
+  }
+  
+  /* ======= Responsive Design ======= */
+  @media screen and (max-width: 768px) {
+    .navbar {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  
+    .nav-links {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  
+    .stock-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
