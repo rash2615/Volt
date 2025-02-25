@@ -47,18 +47,19 @@ body {
   transition: color 0.3s ease-in-out;
 }
 
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
 .nav-links button:hover {
   color: var(--secondary-color);
 }
 
-.nav a {
+a:-webkit-any-link {
   color: white;
   text-decoration: none;
-}
-
-.nav a:hover {
-  text-decoration: none;
-  color: var(--secondary-color);
 }
 
 /* Titre */
