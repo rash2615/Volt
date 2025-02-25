@@ -1,73 +1,47 @@
 import { Injectable } from '@nestjs/common';
-import { ScooterEntity } from '../../domain/entities/scooter.entity';
-import { CheckScooterStatusUseCase } from '../../application/use-cases/check-scooter-status.usecase';
-import { v4 as uuidv4 } from 'uuid';
-import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { ScooterDocument } from '../../infrastructure/database/schemas/scooter.schema';
+import { Model } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
+import { Scooter, ScooterDocument } from '../../infrastructure/database/schemas/scooter.schema';
 
 @Injectable()
 export class ScooterService {
   constructor(
-    @InjectModel('Scooter') private scooterModel: Model<ScooterDocument>
+    @InjectModel(Scooter.name) private scooterModel: Model<ScooterDocument>
   ) {}
 
-  // Retourner la liste des scooters depuis MongoDB
-  async getAllScooters(): Promise<ScooterEntity[]> {
-    const scooters = await this.scooterModel.find().exec();
-    return scooters.map(
-      (scooter) =>
-        new ScooterEntity(
-          scooter.id,
-          scooter.model,
-          scooter.batteryCycles,
-          scooter.lastMaintenanceDate
-        )
-    );
+  async getAllScooters(): Promise<Scooter[]> {
+    return this.scooterModel.find().exec();
   }
 
-  // Vérifier le statut d'un scooter spécifique
   async checkStatus(id: string): Promise<string> {
     const scooter = await this.scooterModel.findById(id).exec();
     if (!scooter) {
       return 'Scooter introuvable';
     }
 
-    const entity = new ScooterEntity(
-      scooter.id,
-      scooter.model,
-      scooter.batteryCycles,
-      scooter.lastMaintenanceDate
-    );
+    const now = new Date();
+    const sixMonths = 1000 * 60 * 60 * 24 * 30 * 6;
+    const needsMaintenance = scooter.batteryCycles >= 50 || (now.getTime() - new Date(scooter.lastMaintenanceDate).getTime()) > sixMonths;
 
-    const useCase = new CheckScooterStatusUseCase();
-    return useCase.execute(entity);
+    return needsMaintenance ? 'Nécessite une maintenance' : 'En bon état';
   }
 
-  // Créer un nouveau scooter dans la base MongoDB
-  async createScooter(model: string, batteryCycles: number, lastMaintenanceDate: Date): Promise<ScooterEntity> {
+  async createScooter(model: string, batteryCycles: number, lastMaintenanceDate: Date): Promise<Scooter> {
     const scooter = new this.scooterModel({
       id: uuidv4(),
       model,
       batteryCycles,
-      lastMaintenanceDate,
+      lastMaintenanceDate
     });
-    await scooter.save();
-
-    return new ScooterEntity(
-      scooter.id,
-      scooter.model,
-      scooter.batteryCycles,
-      scooter.lastMaintenanceDate
-    );
+    return scooter.save();
   }
 
   async deleteScooter(id: string): Promise<string> {
-    const result = await this.scooterModel.findOneAndDelete({ id }); // Utilise l'UUID et non _id
+    const result = await this.scooterModel.findOneAndDelete({ id });
     if (!result) {
       throw new Error('Scooter introuvable');
     }
     return 'Scooter supprimé avec succès';
   }
-  
 }
