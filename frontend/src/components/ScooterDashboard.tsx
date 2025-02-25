@@ -3,7 +3,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Home, Settings, Bike, Trash2, Package } from 'lucide-react';
-import './scooterDashboard.css';
+import '../assets/scooterDashboard.css';
 import { Link } from 'react-router-dom';
 
 // Types

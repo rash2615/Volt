@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import ScooterDashboard from './ScooterDashboard';
-import StockManagement from './StockManagement';
-import SettingsPage from './SettingsPage';
-import ScooterManagement from './ScooterManagement';
-import HomePage from './HomePage';
+import ScooterDashboard from './components/ScooterDashboard';
+import StockManagement from './components/StockManagement';
+import SettingsPage from './components/SettingsPage';
+import ScooterManagement from './components/ScooterManagement';
+import HomePage from './components/HomePage';
 
 const App = () => {
   return (
