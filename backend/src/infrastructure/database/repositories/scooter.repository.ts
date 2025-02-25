@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Scooter, ScooterDocument } from '../database/schemas/scooter.schema'; // Schéma Mongoose
-import { ScooterEntity } from '../../domain/entities/scooter.entity'; // Entité métier
+import { Scooter, ScooterDocument } from '../schemas/scooter.schema'; // Schéma Mongoose
+import { ScooterEntity } from '../../../domain/entities/scooter.entity'; // Entité métier
 
 @Injectable()
 export class ScooterRepository {
