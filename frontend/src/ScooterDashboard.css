@@ -1,0 +1,9 @@
+/* Corrige l'affichage de la carte */
+.leaflet-container {
+    height: 300px !important;
+    width: 100% !important;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  

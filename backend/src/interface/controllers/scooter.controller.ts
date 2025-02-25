@@ -33,6 +33,8 @@ export class ScooterController {
     );
   }
 
+
+
 @Delete('scooters/:id')
 async deleteScooter(@Param('id') id: string) {
   return this.scooterService.deleteScooter(id);
