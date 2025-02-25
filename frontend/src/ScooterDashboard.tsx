@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Home, Settings, Bike, Trash2, Package } from 'lucide-react';
+import './scooterDashboard.css';
+import { Link } from 'react-router-dom';
 
+// Types
 type Scooter = {
   id: string;
   model: string;
@@ -21,39 +25,24 @@ const ScooterDashboard = () => {
 
   // Vérifier si un scooter a besoin de maintenance
   const needsMaintenance = (scooter: Scooter) => {
-    const sixMonths = 1000 * 60 * 60 * 24 * 30 * 6; // 6 mois en millisecondes
+    const sixMonths = 1000 * 60 * 60 * 24 * 30 * 6;
     const lastMaintenance = new Date(scooter.lastMaintenanceDate).getTime();
-    const now = Date.now();
-    return (
-      scooter.batteryCycles >= 50 ||
-      now - lastMaintenance > sixMonths
-    );
+    return scooter.batteryCycles >= 50 || Date.now() - lastMaintenance > sixMonths;
   };
 
-  // Calcul des statistiques
+  // Statistiques
   const totalScooters = scooters.length;
   const scootersNeedingMaintenance = scooters.filter(needsMaintenance);
   const averageBatteryCycles = totalScooters
-    ? Math.round(
-        scooters.reduce((acc, scooter) => acc + scooter.batteryCycles, 0) / totalScooters
-      )
+    ? Math.round(scooters.reduce((acc, scooter) => acc + scooter.batteryCycles, 0) / totalScooters)
     : 0;
   const averageMaintenanceDelay = totalScooters
     ? Math.round(
-        scooters.reduce((acc, scooter) => {
-          const lastMaintenance = new Date(scooter.lastMaintenanceDate).getTime();
-          const now = Date.now();
-          return acc + (now - lastMaintenance);
-        }, 0) /
+        scooters.reduce((acc, scooter) => acc + (Date.now() - new Date(scooter.lastMaintenanceDate).getTime()), 0) /
           totalScooters /
-          (1000 * 60 * 60 * 24) // Convertir en jours
+          (1000 * 60 * 60 * 24)
       )
     : 0;
-
-  // Gérer la recherche
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
 
   // Récupérer la liste des scooters depuis l'API
   const fetchScooters = async () => {
@@ -61,7 +50,6 @@ const ScooterDashboard = () => {
       const response = await axios.get<Scooter[]>('http://localhost:3001/scooters');
       setScooters(response.data);
     } catch (error) {
-      console.error('Erreur lors de la récupération des scooters :', error);
       toast.error('❌ Erreur lors de la récupération des scooters.');
     }
   };
@@ -70,7 +58,7 @@ const ScooterDashboard = () => {
     fetchScooters();
   }, []);
 
-  // Gérer le formulaire de création
+  // Gestion du formulaire
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -79,121 +67,135 @@ const ScooterDashboard = () => {
     e.preventDefault();
     try {
       await axios.post('http://localhost:3001/scooters', formData);
-      fetchScooters(); // Rafraîchir la liste
+      fetchScooters();
       setFormData({ model: '', batteryCycles: 0, lastMaintenanceDate: '' });
       toast.success('✅ Scooter ajouté avec succès !');
     } catch (error) {
-      console.error('Erreur lors de la création du scooter :', error);
       toast.error('❌ Impossible d\'ajouter le scooter.');
     }
   };
 
   const handleDelete = async (id: string) => {
-    console.log('Suppression du scooter avec ID:', id);
     try {
       await axios.delete(`http://localhost:3001/scooters/${id}`);
       fetchScooters();
       toast.success('🗑️ Scooter supprimé avec succès !');
     } catch (error) {
-      console.error('Erreur lors de la suppression du scooter :', error);
       toast.error('❌ Impossible de supprimer le scooter.');
     }
   };
 
-  const filteredScooters = scooters.filter((scooter) =>
-    scooter.model.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">📋 Liste des Scooters</h1>
-
-      {/* Statistiques */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="p-4 bg-blue-100 rounded shadow">
-          <h3 className="text-lg font-semibold">🚲 Total des Scooters</h3>
-          <p className="text-2xl">{totalScooters}</p>
+    <div className="dashboard-container">
+      {/* Navbar */}
+      <nav className="navbar">
+        <h1 className="brand">VoltRide</h1>
+        <div className="nav-links">
+          <Link to="/dashboard" className="nav-button">
+            <Home size={18} /> Dashboard
+          </Link>
+          <Link to="/scooters" className="nav-button">
+            <Bike size={18} /> Scooters
+          </Link>
+          <Link to="/stock" className="nav-button">
+            <Package size={18} /> Gestion des Stocks
+          </Link>
+          <Link to="/settings" className="nav-button">
+            <Settings size={18} /> Paramètres
+          </Link>
         </div>
-        <div className="p-4 bg-red-100 rounded shadow">
-          <h3 className="text-lg font-semibold">⚠️ Scooters en Maintenance</h3>
-          <p className="text-2xl">{scootersNeedingMaintenance.length}</p>
-        </div>
-        <div className="p-4 bg-green-100 rounded shadow">
-          <h3 className="text-lg font-semibold">🔋 Moyenne Cycles</h3>
-          <p className="text-2xl">{averageBatteryCycles}</p>
-        </div>
-        <div className="p-4 bg-yellow-100 rounded shadow">
-          <h3 className="text-lg font-semibold">📅 Maintenance Moyenne</h3>
-          <p className="text-2xl">{averageMaintenanceDelay} jours</p>
-        </div>
-      </div>
+      </nav>
 
-      {/* Recherche */}
-      <input
-        type="text"
-        placeholder="Rechercher par modèle"
-        value={searchTerm}
-        onChange={handleSearchChange}
-        className="border p-2 rounded w-full mb-4"
-      />
+      {/* Dashboard Content */}
+      <div className="dashboard-content">
+        <h2 className="dashboard-title">📊 Tableau de bord des Scooters</h2>
 
-      {/* Liste des scooters nécessitant une maintenance */}
-      <h2 className="text-xl font-semibold mb-2 text-red-500">⚠️ Scooters nécessitant une maintenance</h2>
-      {!scootersNeedingMaintenance.length && (
-        <p className="text-green-500">✅ Tous les scooters sont en bon état.</p>
-      )}
-      <ul className="mb-6">
-        {scootersNeedingMaintenance.map((scooter) => (
-          <li key={scooter.id} className="border p-2 rounded mb-2 bg-red-100 flex justify-between items-center">
-            <div>
-              🚲 <strong>{scooter.model}</strong> - Cycles: {scooter.batteryCycles} - Maintenance: {new Date(scooter.lastMaintenanceDate).toLocaleDateString()}
-            </div>
-            <button
-              onClick={() => handleDelete(scooter.id)}
-              className="bg-red-600 text-white p-2 rounded"
-            >
-              🗑️ Supprimer
-            </button>
-          </li>
-        ))}
-      </ul>
+        {/* Statistiques */}
+        <div className="stats-grid">
+          <StatCard label="Total Scooters" value={totalScooters} icon={<Bike />} bgColor="bg-blue" />
+          <StatCard label="En Maintenance" value={scootersNeedingMaintenance.length} icon={<Settings />} bgColor="bg-red" />
+          <StatCard label="Moyenne Cycles" value={averageBatteryCycles} icon={<Settings />} bgColor="bg-green" />
+          <StatCard label="Maintenance Moyenne" value={`${averageMaintenanceDelay} jours`} icon={<Settings />} bgColor="bg-yellow" />
+        </div>
 
-      {/* Formulaire pour ajouter un scooter */}
-      <h2 className="text-xl font-semibold mb-2">➕ Ajouter un nouveau scooter</h2>
-      <form onSubmit={handleSubmit} className="space-y-2">
+        {/* Recherche */}
         <input
           type="text"
-          name="model"
-          placeholder="Modèle"
-          value={formData.model}
-          onChange={handleChange}
-          className="border p-2 rounded w-full"
-          required
+          placeholder="🔍 Rechercher par modèle..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-bar"
         />
-        <input
-          type="number"
-          name="batteryCycles"
-          placeholder="Cycles de batterie"
-          value={formData.batteryCycles}
-          onChange={handleChange}
-          className="border p-2 rounded w-full"
-          required
-        />
-        <input
-          type="date"
-          name="lastMaintenanceDate"
-          value={formData.lastMaintenanceDate}
-          onChange={handleChange}
-          className="border p-2 rounded w-full"
-          required
-        />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-          ➕ Ajouter
-        </button>
-      </form>
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick pauseOnFocusLoss draggable pauseOnHover />
+
+        {/* Liste des scooters nécessitant une maintenance */}
+        <section className="scooters-list">
+          <h3 className="maintenance-title">⚠️ Scooters nécessitant une maintenance</h3>
+          <div className="scooter-grid">
+            {scootersNeedingMaintenance.map((scooter) => (
+              <div key={scooter.id} className="scooter-card">
+                <div>
+                  <h4 className="scooter-model">🚲 {scooter.model}</h4>
+                  <p>Cycles: {scooter.batteryCycles}</p>
+                  <p>Maintenance: {new Date(scooter.lastMaintenanceDate).toLocaleDateString()}</p>
+                </div>
+                <button
+                  onClick={() => handleDelete(scooter.id)}
+                  className="delete-button"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Formulaire d'ajout */}
+        <section className="add-scooter-form">
+          <h3>➕ Ajouter un nouveau scooter</h3>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              name="model"
+              placeholder="Modèle"
+              value={formData.model}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="number"
+              name="batteryCycles"
+              placeholder="Cycles de batterie"
+              value={formData.batteryCycles}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="date"
+              name="lastMaintenanceDate"
+              value={formData.lastMaintenanceDate}
+              onChange={handleChange}
+              required
+            />
+            <button type="submit" className="submit-button">
+              ➕ Ajouter le scooter
+            </button>
+          </form>
+        </section>
+      </div>
+
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar pauseOnHover />
     </div>
   );
 };
+
+const StatCard = ({ label, value, icon, bgColor }: any) => (
+  <div className={`stat-card ${bgColor}`}>
+    <div className="icon">{icon}</div>
+    <div>
+      <p className="label">{label}</p>
+      <p className="value">{value}</p>
+    </div>
+  </div>
+);
 
 export default ScooterDashboard;

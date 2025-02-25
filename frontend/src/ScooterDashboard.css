@@ -1,9 +1,195 @@
-/* Corrige l'affichage de la carte */
-.leaflet-container {
-    height: 300px !important;
-    width: 100% !important;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 20px;
+/* Importer Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+/* Variables globales pour la palette de couleurs */
+:root {
+  --primary-color: #6200ee;
+  --secondary-color: #03dac6;
+  --background-color: #f5f5f5;
+  --surface-color: #ffffff;
+  --error-color: #b00020;
+  --text-primary: #212121;
+  --text-secondary: #757575;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Général */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-container {
+  padding: 20px;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1.2rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow);
+  border-radius: 12px;
+}
+
+.nav-links button {
+  background: none;
+  border: none;
+  color: white;
+  margin-left: 1.2rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-links button:hover {
+  color: var(--secondary-color);
+}
+
+.nav a {
+  color: white;
+  text-decoration: none;
+}
+
+.nav a:hover {
+  text-decoration: none;
+  color: var(--secondary-color);
+}
+
+/* Titre */
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 2rem 0;
+}
+
+/* Statistiques */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin: 20px 0;
+}
+
+.stat-card {
+  background-color: var(--surface-color);
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: var(--shadow);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.bg-blue {
+  background-color: #2962ff;
+}
+
+.bg-red {
+  background-color: #d50000;
+}
+
+.bg-green {
+  background-color: #00c853;
+}
+
+.bg-yellow {
+  background-color: #ffab00;
+}
+
+/* Recherche */
+.search-bar {
+  width: 97.5%;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 2px solid var(--secondary-color);
+  margin-bottom: 2rem;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.search-bar:focus {
+  border-color: var(--primary-color);
+}
+
+/* Liste des scooters */
+.scooter-card {
+  background-color: #eeeeee;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease-in-out;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideIn 0.6s forwards;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
+}
+
+.delete-button {
+  background-color: var(--error-color);
+  color: white;
+  padding: 0.6rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #7b0014;
+}
+
+/* Formulaire d'ajout */
+.add-scooter-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.add-scooter-form input {
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--text-secondary);
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.add-scooter-form input:focus {
+  border-color: var(--primary-color);
+}
+
+.submit-button {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.submit-button:hover {
+  background-color: #3700b3;
+}
