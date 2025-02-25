@@ -6,7 +6,14 @@ import { Home, Settings, Bike, Trash2, Package } from 'lucide-react';
 import '../assets/scooterDashboard.css';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Scooter } from '../types/Scooter';
+
+// ✅ Types
+type Scooter = {
+  _id: string;
+  model: string;
+  batteryCycles: number;
+  lastMaintenanceDate: string;
+};
 
 const ScooterDashboard = () => {
   const [scooters, setScooters] = useState<Scooter[]>([]);
@@ -15,23 +22,85 @@ const ScooterDashboard = () => {
     batteryCycles: 0,
     lastMaintenanceDate: '',
   });
+  const [notifications, setNotifications] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Récupérer la liste des scooters
+  // 🔄 Récupération des notifications de stock faible
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get<string[]>(
+        'http://localhost:3001/stock/notifications'
+      );
+      const newNotifications = response.data;
+      if (newNotifications.length) {
+        newNotifications.forEach((notif) => {
+          toast.warn(`⚠️ ${notif}`);
+        });
+        setNotifications(newNotifications);
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la récupération des notifications');
+    }
+  };
+
+  // 🔄 Récupération des scooters
   const fetchScooters = async () => {
     try {
-      const response = await axios.get<Scooter[]>('http://localhost:3001/scooters');
+      const response = await axios.get<Scooter[]>(
+        'http://localhost:3001/scooters'
+      );
       setScooters(response.data);
     } catch (error) {
       toast.error('❌ Erreur lors de la récupération des scooters.');
     }
   };
 
+  // 🔁 Rafraîchissement automatique
   useEffect(() => {
     fetchScooters();
+    fetchNotifications();
+    const interval = setInterval(() => {
+      fetchNotifications();
+    }, 10000); // ➡️ Rafraîchit toutes les 10 secondes
+
+    return () => clearInterval(interval);
   }, []);
 
-  // Ajouter un scooter
+  // 📊 Calcul des statistiques
+  const totalScooters = scooters.length;
+  const scootersNeedingMaintenance = scooters.filter(
+    (scooter) =>
+      scooter.batteryCycles >= 50 ||
+      Date.now() - new Date(scooter.lastMaintenanceDate).getTime() >
+        1000 * 60 * 60 * 24 * 30 * 6
+  );
+
+  const averageBatteryCycles = totalScooters
+    ? Math.round(
+        scooters.reduce((acc, scooter) => acc + scooter.batteryCycles, 0) /
+          totalScooters
+      )
+    : 0;
+
+  const averageMaintenanceDelay = totalScooters
+    ? Math.round(
+        scooters.reduce(
+          (acc, scooter) =>
+            acc +
+            (Date.now() -
+              new Date(scooter.lastMaintenanceDate).getTime()),
+          0
+        ) /
+          totalScooters /
+          (1000 * 60 * 60 * 24)
+      )
+    : 0;
+
+  // ➕ Gestion du formulaire d'ajout
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -44,7 +113,6 @@ const ScooterDashboard = () => {
     }
   };
 
-  // Supprimer un scooter
   const handleDelete = async (_id: string) => {
     try {
       await axios.delete(`http://localhost:3001/scooters/${_id}`);
@@ -55,7 +123,7 @@ const ScooterDashboard = () => {
     }
   };
 
-  // Filtrage des scooters
+  // 🔍 Filtrage en temps réel
   const filteredScooters = scooters.filter((scooter) =>
     scooter.model.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -81,48 +149,69 @@ const ScooterDashboard = () => {
         </div>
       </nav>
 
-      {/* Contenu principal */}
+      {/* 📊 Dashboard Content */}
       <div className="dashboard-content">
         <h2 className="dashboard-title">📊 Tableau de bord des Scooters</h2>
 
-        {/* Statistiques */}
+        {/* ➡️ Statistiques */}
         <motion.div
           className="stats-grid"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <StatCard label="Total Scooters" value={scooters.length} icon={<Bike />} bgColor="bg-blue" />
-          <StatCard label="En Maintenance" value={scooters.filter(scooter => scooter.batteryCycles >= 50).length} icon={<Settings />} bgColor="bg-red" />
+          <StatCard
+            label="Total Scooters"
+            value={totalScooters}
+            icon={<Bike />}
+            bgColor="bg-blue"
+          />
+          <StatCard
+            label="En Maintenance"
+            value={scootersNeedingMaintenance.length}
+            icon={<Settings />}
+            bgColor="bg-red"
+          />
+          <StatCard
+            label="Moyenne Cycles"
+            value={averageBatteryCycles}
+            icon={<Settings />}
+            bgColor="bg-green"
+          />
+          <StatCard
+            label="Maintenance Moyenne"
+            value={`${averageMaintenanceDelay} jours`}
+            icon={<Settings />}
+            bgColor="bg-yellow"
+          />
         </motion.div>
 
-        {/* Barre de recherche */}
+        {/* 🔍 Recherche */}
         <motion.input
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.5 }}
           type="text"
           placeholder="🔍 Rechercher par modèle..."
           value={searchTerm}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
           className="search-bar"
         />
 
-        {/* Liste des scooters */}
+        {/* 🚲 Liste des scooters */}
         <section className="scooters-list">
-          <h3 className="maintenance-title">🛴 Liste des Scooters</h3>
-          <motion.div
-            className="scooter-grid"
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.8 }}
-          >
+          <h3 className="maintenance-title">
+            ⚠️ Scooters nécessitant une maintenance
+          </h3>
+          <motion.div className="scooter-grid">
             {filteredScooters.map((scooter) => (
               <div key={scooter._id} className="scooter-card">
                 <div>
                   <h4 className="scooter-model">🚲 {scooter.model}</h4>
                   <p>Cycles: {scooter.batteryCycles}</p>
-                  <p>Maintenance: {new Date(scooter.lastMaintenanceDate).toLocaleDateString()}</p>
+                  <p>
+                    Maintenance:{' '}
+                    {new Date(
+                      scooter.lastMaintenanceDate
+                    ).toLocaleDateString()}
+                  </p>
                 </div>
                 <button
                   onClick={() => handleDelete(scooter._id)}
@@ -135,7 +224,7 @@ const ScooterDashboard = () => {
           </motion.div>
         </section>
 
-        {/* Formulaire d'ajout */}
+        {/* ➕ Formulaire d'ajout */}
         <section className="add-scooter-form">
           <h3>➕ Ajouter un nouveau scooter</h3>
           <form onSubmit={handleSubmit}>
@@ -144,7 +233,7 @@ const ScooterDashboard = () => {
               name="model"
               placeholder="Modèle"
               value={formData.model}
-              onChange={(e) => setFormData({ ...formData, model: e.target.value })}
+              onChange={handleChange}
               required
             />
             <input
@@ -152,14 +241,14 @@ const ScooterDashboard = () => {
               name="batteryCycles"
               placeholder="Cycles de batterie"
               value={formData.batteryCycles}
-              onChange={(e) => setFormData({ ...formData, batteryCycles: Number(e.target.value) })}
+              onChange={handleChange}
               required
             />
             <input
               type="date"
               name="lastMaintenanceDate"
               value={formData.lastMaintenanceDate}
-              onChange={(e) => setFormData({ ...formData, lastMaintenanceDate: e.target.value })}
+              onChange={handleChange}
               required
             />
             <button type="submit" className="submit-button">
@@ -169,12 +258,18 @@ const ScooterDashboard = () => {
         </section>
       </div>
 
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar pauseOnHover />
+      {/* 🔔 Notifications */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar
+        pauseOnHover
+      />
     </div>
   );
 };
 
-// Carte de statistiques animée
+// 📊 Carte de statistiques
 const StatCard = ({ label, value, icon, bgColor }: any) => (
   <motion.div
     className={`stat-card ${bgColor}`}

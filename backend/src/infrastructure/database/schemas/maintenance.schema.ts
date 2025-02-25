@@ -12,10 +12,10 @@ export class Maintenance {
   scheduledDate!: Date;
 
   @Prop({ required: true })
-  notes!: string;
+  description!: string; // ✅ Champ obligatoire
 
-  @Prop({ default: 'pending' })
-  status!: string;
+  @Prop({ default: false })
+  completed!: boolean;
 }
 
 export const MaintenanceSchema = SchemaFactory.createForClass(Maintenance);

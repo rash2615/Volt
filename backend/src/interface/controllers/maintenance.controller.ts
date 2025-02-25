@@ -1,30 +1,31 @@
-import { Controller, Post, Get, Body, Param, Put } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body } from '@nestjs/common';
 import { MaintenanceService } from '../services/maintenance.service';
-import { Maintenance } from '../../infrastructure/database/schemas/maintenance.schema';
 
 @Controller('maintenance')
 export class MaintenanceController {
   constructor(private readonly maintenanceService: MaintenanceService) {}
 
+  // ✅ Planifier une maintenance
   @Post()
   async scheduleMaintenance(
-    @Body() body: { scooterId: string; scheduledDate: string; notes: string }
-  ): Promise<Maintenance> {
-    const { scooterId, scheduledDate, notes } = body;
-    return this.maintenanceService.scheduleMaintenance(
-      scooterId,
-      new Date(scheduledDate),
-      notes
+    @Body() maintenanceData: { scooterId: string; scheduledDate: Date; description: string }
+  ): Promise<string> {
+    return await this.maintenanceService.scheduleMaintenance(
+      maintenanceData.scooterId,
+      maintenanceData.scheduledDate,
+      maintenanceData.description // ✅ Envoi correct de la description
     );
   }
 
+  // ✅ Récupérer toutes les maintenances
   @Get()
-  async getAllMaintenances(): Promise<Maintenance[]> {
-    return this.maintenanceService.getAllMaintenances();
+  async getAllMaintenance() {
+    return await this.maintenanceService.getAllMaintenance();
   }
 
-  @Put(':id/complete')
-  async completeMaintenance(@Param('id') id: string): Promise<Maintenance | null> {
-    return this.maintenanceService.completeMaintenance(id);
+  // ✅ Marquer une maintenance comme terminée
+  @Post(':id/complete')
+  async completeMaintenance(@Param('id') id: string): Promise<string> {
+    return await this.maintenanceService.completeMaintenance(id);
   }
 }
