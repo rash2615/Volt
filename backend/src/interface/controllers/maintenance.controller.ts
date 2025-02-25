@@ -1,30 +1,30 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
-import { ScheduleMaintenanceUseCase } from '../../application/use-cases/schedule-maintenance.usecase';
-import { NotificationService } from '../../infrastructure/notifications/notification.service';
+import { Controller, Post, Get, Body, Param, Put } from '@nestjs/common';
+import { MaintenanceService } from '../services/maintenance.service';
+import { Maintenance } from '../../infrastructure/database/schemas/maintenance.schema';
 
 @Controller('maintenance')
 export class MaintenanceController {
-  private scheduleMaintenanceUseCase = new ScheduleMaintenanceUseCase();
-  private notificationService = new NotificationService();
+  constructor(private readonly maintenanceService: MaintenanceService) {}
 
   @Post()
-  schedule(@Body() maintenanceData: { scooterId: string; type: string; description: string }) {
-    const maintenance = this.scheduleMaintenanceUseCase.scheduleMaintenance(
-      maintenanceData.scooterId,
-      maintenanceData.type as 'Préventive' | 'Corrective',
-      maintenanceData.description
+  async scheduleMaintenance(
+    @Body() body: { scooterId: string; scheduledDate: string; notes: string }
+  ): Promise<Maintenance> {
+    const { scooterId, scheduledDate, notes } = body;
+    return this.maintenanceService.scheduleMaintenance(
+      scooterId,
+      new Date(scheduledDate),
+      notes
     );
-
-    this.notificationService.sendNotification(
-      'Gestionnaire de flotte',
-      `Maintenance planifiée pour le scooter ID ${maintenance.scooterId}`
-    );
-
-    return maintenance;
   }
 
-  @Get('history')
-  getMaintenanceHistory() {
-    return this.scheduleMaintenanceUseCase.getMaintenanceHistory();
+  @Get()
+  async getAllMaintenances(): Promise<Maintenance[]> {
+    return this.maintenanceService.getAllMaintenances();
+  }
+
+  @Put(':id/complete')
+  async completeMaintenance(@Param('id') id: string): Promise<Maintenance | null> {
+    return this.maintenanceService.completeMaintenance(id);
   }
 }

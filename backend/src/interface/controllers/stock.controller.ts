@@ -28,4 +28,12 @@ export class StockController {
   async deleteStockItem(@Param('id') id: string): Promise<StockItem | null> {
     return this.stockService.deleteStockItem(id);
   }
+
+  // ✅ Route pour utiliser une pièce du stock
+  @Post('use')
+  async usePart(@Body() body: { partId: string; quantity: number }): Promise<{ message: string }> {
+    const result = await this.stockService.usePart(body.partId, body.quantity);
+
+    return { message: result };
+  }
 }

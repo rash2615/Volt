@@ -13,16 +13,37 @@ export class StockService {
     return this.stockModel.find().exec();
   }
 
-  async createStockItem(data: Partial<StockItem>): Promise<StockItem> {
-    const newItem = new this.stockModel(data);
+  async createStockItem(stockData: Partial<StockItem>): Promise<StockItem> {
+    const newItem = new this.stockModel(stockData);
     return newItem.save();
   }
 
-  async updateStockItem(id: string, data: Partial<StockItem>): Promise<StockItem | null> {
-    return this.stockModel.findByIdAndUpdate(id, data, { new: true }).exec();
+  async updateStockItem(id: string, stockData: Partial<StockItem>): Promise<StockItem | null> {
+    return this.stockModel.findByIdAndUpdate(id, stockData, { new: true }).exec();
   }
 
   async deleteStockItem(id: string): Promise<StockItem | null> {
     return this.stockModel.findByIdAndDelete(id).exec();
+  }
+
+  async usePart(partId: string, quantity: number): Promise<string> {
+    const item = await this.stockModel.findById(partId).exec();
+
+    if (!item) {
+      return '❌ Pièce non trouvée.';
+    }
+
+    if (item.quantity < quantity) {
+      return '❌ Stock insuffisant.';
+    }
+
+    item.quantity -= quantity;
+    await item.save();
+
+    if (item.quantity <= 5) {
+      return `⚠️ Attention, le stock de ${item.name} est faible.`;
+    }
+
+    return `${quantity} ${item.name}(s) utilisé(s) avec succès.`;
   }
 }
