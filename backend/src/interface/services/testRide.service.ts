@@ -5,6 +5,10 @@ import { TestRide, TestRideDocument } from '../../infrastructure/database/schema
 
 @Injectable()
 export class TestRideService {
+  model: any;
+  getTestRideById(id: string) {
+    return this.model.findById(id);
+  }
   constructor(@InjectModel(TestRide.name) private testRideModel: Model<TestRideDocument>) {}
 
   async getAllTestRides(): Promise<TestRide[]> {

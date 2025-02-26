@@ -1,5 +1,7 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+
+export type TestRideDocument = TestRide & Document;
 
 @Schema()
 export class TestRide {
@@ -9,12 +11,11 @@ export class TestRide {
   @Prop({ required: true })
   userId!: string;
 
-  @Prop({ required: true })
-  date!: Date;
+  @Prop({ required: true, default: Date.now })
+  startTime!: Date;
 
-  @Prop({ required: true, enum: ['scheduled', 'completed', 'cancelled'], default: 'scheduled' })
-  status!: string;
+  @Prop()
+  endTime!: Date;
 }
 
-export type TestRideDocument = TestRide & Document;
 export const TestRideSchema = SchemaFactory.createForClass(TestRide);

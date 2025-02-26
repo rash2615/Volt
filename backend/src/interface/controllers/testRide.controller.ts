@@ -1,28 +1,33 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
 import { TestRideService } from '../services/testRide.service';
-import { TestRide } from '../../infrastructure/database/schemas/testRide.schema';
+import { CreateTestRideDto, UpdateTestRideDto } from '../../application/dto/testRide.dto';
 
-@Controller('test-rides')
+@Controller('test-rides') // ✅ Vérifie bien que c'est 'test-rides'
 export class TestRideController {
   constructor(private readonly testRideService: TestRideService) {}
 
   @Get()
-  async getAllTestRides(): Promise<TestRide[]> {
-    return this.testRideService.getAllTestRides();
+  async getAllTestRides() {
+    return await this.testRideService.getAllTestRides();
+  }
+
+  @Get(':id')
+  async getTestRideById(@Param('id') id: string) {
+    return await this.testRideService.getTestRideById(id);
   }
 
   @Post()
-  async createTestRide(@Body() data: Partial<TestRide>): Promise<TestRide> {
-    return this.testRideService.createTestRide(data);
+  async createTestRide(@Body() createTestRideDto: CreateTestRideDto) {
+    return await this.testRideService.createTestRide(createTestRideDto);
   }
 
   @Put(':id')
-  async updateTestRide(@Param('id') id: string, @Body() data: Partial<TestRide>): Promise<TestRide | null> {
-    return this.testRideService.updateTestRide(id, data);
+  async updateTestRide(@Param('id') id: string, @Body() updateTestRideDto: UpdateTestRideDto) {
+    return await this.testRideService.updateTestRide(id, updateTestRideDto);
   }
 
   @Delete(':id')
-  async deleteTestRide(@Param('id') id: string): Promise<TestRide | null> {
-    return this.testRideService.deleteTestRide(id);
+  async deleteTestRide(@Param('id') id: string) {
+    return await this.testRideService.deleteTestRide(id);
   }
 }
