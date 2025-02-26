@@ -10,6 +10,9 @@ import { NotificationService } from './interface/services/notification.service';
 import { MaintenanceController } from './interface/controllers/maintenance.controller';
 import { MaintenanceService } from './interface/services/maintenance.service';
 import { Maintenance, MaintenanceSchema } from './infrastructure/database/schemas/maintenance.schema';
+import { TestRideController } from './interface/controllers/testRide.controller';
+import { TestRideService } from './interface/services/testRide.service';
+import { TestRide, TestRideSchema } from './infrastructure/database/schemas/testRide.schema';
 
 @Module({
   imports: [
@@ -17,9 +20,10 @@ import { Maintenance, MaintenanceSchema } from './infrastructure/database/schema
     MongooseModule.forFeature([
       { name: Scooter.name, schema: ScooterSchema },
       { name: StockItem.name, schema: StockItemSchema },
-      { name: Maintenance.name, schema: MaintenanceSchema }])
+      { name: Maintenance.name, schema: MaintenanceSchema },
+      { name: TestRide.name, schema: TestRideSchema }])
   ],
-  controllers: [ScooterController, StockController, MaintenanceController],
-  providers: [ScooterService, StockService, MaintenanceService, NotificationService],
+  controllers: [ScooterController, StockController, MaintenanceController, TestRideController],
+  providers: [ScooterService, StockService, MaintenanceService, NotificationService, TestRideService],
 })
 export class AppModule {}
