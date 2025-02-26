@@ -44,4 +44,12 @@ export class ScooterService {
     }
     return 'Scooter supprimé avec succès';
   }
+
+  async updateScooter(id: string, updateData: { model?: string; batteryCycles?: number; lastMaintenanceDate?: Date }) {
+    const updatedScooter = await this.scooterModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+    if (!updatedScooter) {
+      throw new Error('Scooter introuvable');
+    }
+    return updatedScooter;
+  }
 }
