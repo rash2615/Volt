@@ -10,10 +10,12 @@ export class ScooterService {
     @InjectModel(Scooter.name) private scooterModel: Model<ScooterDocument>
   ) {}
 
+  // ✅ Récupérer tous les scooters
   async getAllScooters(): Promise<Scooter[]> {
     return this.scooterModel.find().exec();
   }
 
+  // ✅ Récupérer un scooter par ID
   async checkStatus(id: string): Promise<string> {
     const scooter = await this.scooterModel.findById(id).exec();
     if (!scooter) {
@@ -27,6 +29,7 @@ export class ScooterService {
     return needsMaintenance ? 'Nécessite une maintenance' : 'En bon état';
   }
 
+  // ✅ Créer un nouveau scooter
   async createScooter(model: string, batteryCycles: number, lastMaintenanceDate: Date): Promise<Scooter> {
     const scooter = new this.scooterModel({
       id: uuidv4(),
@@ -37,6 +40,7 @@ export class ScooterService {
     return scooter.save();
   }
 
+  // ✅ Supprimer un scooter par ID
   async deleteScooter(id: string): Promise<string> {
     const result = await this.scooterModel.findOneAndDelete({ id });
     if (!result) {
@@ -45,6 +49,7 @@ export class ScooterService {
     return 'Scooter supprimé avec succès';
   }
 
+  // ✅ Mettre à jour un scooter par ID
   async updateScooter(id: string, updateData: { model?: string; batteryCycles?: number; lastMaintenanceDate?: Date }) {
     const updatedScooter = await this.scooterModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
     if (!updatedScooter) {

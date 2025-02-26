@@ -11,19 +11,23 @@ export class TestRideService {
   }
   constructor(@InjectModel(TestRide.name) private testRideModel: Model<TestRideDocument>) {}
 
+  // ✅ Récupérer tous les test rides
   async getAllTestRides(): Promise<TestRide[]> {
     return this.testRideModel.find().exec();
   }
 
+  // ✅ Récupérer un test ride par ID
   async createTestRide(data: Partial<TestRide>): Promise<TestRide> {
     const testRide = new this.testRideModel(data);
     return testRide.save();
   }
 
+  // ✅ Création d'un test ride
   async updateTestRide(id: string, data: Partial<TestRide>): Promise<TestRide | null> {
     return this.testRideModel.findByIdAndUpdate(id, data, { new: true }).exec();
   }
 
+  // ✅ Mettre à jour un test ride
   async deleteTestRide(id: string): Promise<TestRide | null> {
     return this.testRideModel.findByIdAndDelete(id).exec();
   }

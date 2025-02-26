@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 export type MaintenanceDocument = Maintenance & Document;
-
+// Maintenance entity
 @Schema()
 export class Maintenance {
   @Prop({ required: true })
@@ -12,7 +12,7 @@ export class Maintenance {
   scheduledDate!: Date;
 
   @Prop({ required: true })
-  description!: string; // ✅ Champ obligatoire
+  description!: string; 
 
   @Prop({ default: false })
   completed!: boolean;

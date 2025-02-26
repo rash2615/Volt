@@ -1,8 +1,10 @@
 import { Maintenance } from '../../domain/entities/maintenance.entity';
 
+// Use case for scheduling maintenance
 export class ScheduleMaintenanceUseCase {
   private maintenances: Maintenance[] = [];
 
+  // Schedule maintenance for a scooter
   scheduleMaintenance(
     scooterId: string,
     type: 'Préventive' | 'Corrective',
@@ -20,6 +22,7 @@ export class ScheduleMaintenanceUseCase {
     return newMaintenance;
   }
 
+  // Get maintenance history for a scooter
   getMaintenanceHistory(): Maintenance[] {
     return this.maintenances;
   }

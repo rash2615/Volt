@@ -13,7 +13,7 @@ export class MaintenanceController {
     return await this.maintenanceService.scheduleMaintenance(
       maintenanceData.scooterId,
       maintenanceData.scheduledDate,
-      maintenanceData.description // ✅ Envoi correct de la description
+      maintenanceData.description 
     );
   }
 

@@ -15,6 +15,7 @@ import { TestRideService } from './interface/services/testRide.service';
 import { TestRide, TestRideSchema } from './infrastructure/database/schemas/testRide.schema';
 
 @Module({
+  // ✅ Importer les modules Mongoose
   imports: [
     MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://mongo:27017/voltride'),
     MongooseModule.forFeature([
@@ -23,6 +24,7 @@ import { TestRide, TestRideSchema } from './infrastructure/database/schemas/test
       { name: Maintenance.name, schema: MaintenanceSchema },
       { name: TestRide.name, schema: TestRideSchema }])
   ],
+  // ✅ Importer les controllers et services
   controllers: [ScooterController, StockController, MaintenanceController, TestRideController],
   providers: [ScooterService, StockService, MaintenanceService, NotificationService, TestRideService],
 })

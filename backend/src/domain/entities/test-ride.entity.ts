@@ -9,6 +9,7 @@ export class TestRide {
       public incidentReport?: string
     ) {}
   
+    // Report an incident during the test ride
     reportIncident(description: string) {
       this.incidentReport = description;
     }

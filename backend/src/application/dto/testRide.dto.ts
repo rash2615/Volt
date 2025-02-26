@@ -1,5 +1,6 @@
 import { IsString, IsOptional, IsDate } from 'class-validator';
 
+// DTOs for TestRide entity
 export class CreateTestRideDto {
   @IsString()
   scooterId!: string;
