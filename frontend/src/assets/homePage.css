@@ -1,0 +1,73 @@
+.home-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    text-align: center;
+  }
+  
+  .hero-section {
+    max-width: 600px;
+    padding: 20px;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 20px;
+  }
+  
+  .start-button {
+    display: inline-block;
+    background-color: #8400ff;
+    color: white;
+    padding: 12px 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 30px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .start-button:hover {
+    background-color: #8400ff;
+    transform: scale(1.05);
+  }
+  
+  /* Section Anniversaire */
+.birthday-section {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    background: rgba(255, 215, 0, 0.2);
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .birthday-title {
+    font-size: 2rem;
+    color: #ffc800;
+    font-weight: bold;
+  }
+  
+  .birthday-message {
+    font-size: 1.2rem;
+    color: white;
+    margin-bottom: 15px;
+  }
+  
+  .birthday-cake {
+    width: 120px;
+    height: auto;
+    cursor: pointer;
+  }
+  
